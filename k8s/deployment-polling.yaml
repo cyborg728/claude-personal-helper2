@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-bot
+  namespace: telegram-bot
+  labels:
+    app: telegram-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegram-bot
+  template:
+    metadata:
+      labels:
+        app: telegram-bot
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: telegram-bot
+          image: ghcr.io/OWNER/claude-personal-helper2:latest
+          env:
+            - name: BOT_MODE
+              value: "polling"
+            - name: BOT_DATABASE_URL
+              value: "sqlite+aiosqlite:///data/bot.db"
+          envFrom:
+            - secretRef:
+                name: telegram-bot-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: telegram-bot-data

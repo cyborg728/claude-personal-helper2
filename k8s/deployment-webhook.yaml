@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-bot
+  namespace: telegram-bot
+  labels:
+    app: telegram-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegram-bot
+  template:
+    metadata:
+      labels:
+        app: telegram-bot
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: telegram-bot
+          image: ghcr.io/OWNER/claude-personal-helper2:latest
+          ports:
+            - containerPort: 8443
+          env:
+            - name: BOT_MODE
+              value: "webhook"
+            - name: BOT_WEBHOOK_DOMAIN
+              value: "tg-assistant.f-f.dev"
+            - name: BOT_DATABASE_URL
+              value: "sqlite+aiosqlite:///data/bot.db"
+          envFrom:
+            - secretRef:
+                name: telegram-bot-secrets
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8443
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8443
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: telegram-bot-data

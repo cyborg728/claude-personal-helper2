@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: telegram-bot
+  namespace: telegram-bot
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - tg-assistant.f-f.dev
+      secretName: telegram-bot-tls
+  rules:
+    - host: tg-assistant.f-f.dev
+      http:
+        paths:
+          - path: /webhook
+            pathType: Exact
+            backend:
+              service:
+                name: telegram-bot
+                port:
+                  number: 8443
