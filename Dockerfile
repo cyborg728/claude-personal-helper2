@@ -1,9 +1,10 @@
 FROM python:3.12-slim
 
 WORKDIR /app
-COPY pyproject.toml .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY bot/ bot/
-RUN pip install --no-cache-dir .
 RUN mkdir -p /app/data
 
 EXPOSE 8443
