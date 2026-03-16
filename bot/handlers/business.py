@@ -115,6 +115,7 @@ async def handle_business_message(
                 text=full_message,
                 parse_mode="Markdown",
                 business_connection_id=message.business_connection_id,
+                reply_to_message_id=original.message_id,
             )
 
         # Mark the replied message as read
@@ -141,6 +142,7 @@ async def handle_business_message(
                 text=f"🌐 *{sender.first_name}:*\n{translated}",
                 parse_mode="Markdown",
                 business_connection_id=message.business_connection_id,
+                reply_to_message_id=message.message_id,
             )
         elif message.voice:
             file = await context.bot.get_file(message.voice.file_id)
@@ -151,6 +153,7 @@ async def handle_business_message(
                 text=f"🎤 *{sender.first_name}:*\n{result}",
                 parse_mode="Markdown",
                 business_connection_id=message.business_connection_id,
+                reply_to_message_id=message.message_id,
             )
 
         # Mark message as read
