@@ -19,12 +19,14 @@ spec:
         - name: ghcr-secret
       containers:
         - name: telegram-bot
-          image: ghcr.io/OWNER/claude-personal-helper2:latest
+          image: ghcr.io/cyborg728/claude-personal-helper2:latest
           env:
             - name: BOT_MODE
               value: "polling"
             - name: BOT_DATABASE_URL
               value: "sqlite+aiosqlite:///data/bot.db"
+            - name: BOT_DEBUG
+              value: "false"
           envFrom:
             - secretRef:
                 name: telegram-bot-secrets

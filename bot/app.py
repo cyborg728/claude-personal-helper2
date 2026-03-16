@@ -11,7 +11,7 @@ from bot.webhook import create_litestar_app, set_application
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
+    level=logging.DEBUG if settings.debug else logging.INFO,
 )
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ async def run_webhook() -> None:
         app=litestar_app,
         host=settings.host,
         port=settings.port,
-        log_level="info",
+        log_level="debug" if settings.debug else "info",
     )
     server = uvicorn.Server(config)
     try:
