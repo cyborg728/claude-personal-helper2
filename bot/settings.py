@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8443
     database_url: str = "sqlite+aiosqlite:///data/bot.db"
+    debug: bool = False
     default_locale: str = "en"
     available_locales: list[str] = ["en", "ru", "ko"]
 
