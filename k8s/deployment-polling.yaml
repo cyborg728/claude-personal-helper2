@@ -19,7 +19,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: telegram-bot
-          image: ghcr.io/cyborg728/claude-personal-helper2:latest
+          image: ghcr.io/OWNER/claude-personal-helper2:latest
           env:
             - name: BOT_MODE
               value: "polling"

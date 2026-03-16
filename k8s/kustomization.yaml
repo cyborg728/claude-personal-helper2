@@ -8,5 +8,5 @@ resources:
   - service.yaml
   - ingress.yaml
 images:
-  - name: ghcr.io/cyborg728/claude-personal-helper2
+  - name: ghcr.io/OWNER/claude-personal-helper2
     newTag: latest
