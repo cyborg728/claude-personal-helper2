@@ -27,11 +27,9 @@ spec:
               value: "webhook"
             - name: BOT_WEBHOOK_DOMAIN
               value: "tg-assistant.f-f.dev"
-            - name: BOT_DATABASE_URL
-              value: "sqlite+aiosqlite:///data/bot.db"
-            - name: BOT_DEBUG
-              value: "false"
           envFrom:
+            - configMapRef:
+                name: telegram-bot-config
             - secretRef:
                 name: telegram-bot-secrets
           volumeMounts:
