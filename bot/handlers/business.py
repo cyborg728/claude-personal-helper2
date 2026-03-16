@@ -59,16 +59,28 @@ def _detect_target_language(language_code: str | None) -> str:
 async def handle_business_message(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
+    logger.debug("Received business_message update: %s", update.update_id)
     message = update.business_message
     if not message:
+        logger.debug("No business_message in update, skipping")
         return
 
     if not await _is_translation_enabled():
+        logger.debug("Translation is disabled, skipping")
         return
 
     sender = message.from_user
     if not sender:
+        logger.debug("No from_user in business message, skipping")
         return
+
+    logger.debug(
+        "Business message from user=%s (username=%s), chat=%s, connection=%s",
+        sender.id,
+        sender.username,
+        message.chat.id,
+        message.business_connection_id,
+    )
 
     is_from_admin = (
         sender.username
@@ -78,15 +90,18 @@ async def handle_business_message(
     if is_from_admin:
         # Admin is replying to someone via business chat
         if not message.reply_to_message:
+            logger.debug("Admin message but not a reply, skipping")
             return
         original = message.reply_to_message
         original_sender = original.from_user
         if not original_sender:
+            logger.debug("No from_user on original message, skipping")
             return
 
         if not await _is_in_translate_whitelist(
             original_sender.username
         ):
+            logger.debug("Original sender %s not in translate whitelist", original_sender.username)
             return
 
         target_lang = _detect_target_language(original_sender.language_code)
@@ -100,6 +115,7 @@ async def handle_business_message(
                 text=full_message,
                 parse_mode="Markdown",
                 business_connection_id=message.business_connection_id,
+                reply_to_message_id=original.message_id,
             )
 
         # Mark the replied message as read
@@ -114,6 +130,7 @@ async def handle_business_message(
     else:
         # Message from a user (not admin) — translate for admin
         if not await _is_in_translate_whitelist(sender.username):
+            logger.debug("Sender %s not in translate whitelist, skipping", sender.username)
             return
 
         admin_lang = "ru"  # Admin's language for receiving translations
@@ -125,6 +142,7 @@ async def handle_business_message(
                 text=f"🌐 *{sender.first_name}:*\n{translated}",
                 parse_mode="Markdown",
                 business_connection_id=message.business_connection_id,
+                reply_to_message_id=message.message_id,
             )
         elif message.voice:
             file = await context.bot.get_file(message.voice.file_id)
@@ -135,6 +153,7 @@ async def handle_business_message(
                 text=f"🎤 *{sender.first_name}:*\n{result}",
                 parse_mode="Markdown",
                 business_connection_id=message.business_connection_id,
+                reply_to_message_id=message.message_id,
             )
 
         # Mark message as read

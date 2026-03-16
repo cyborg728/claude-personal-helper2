@@ -19,7 +19,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: telegram-bot
-          image: ghcr.io/cyborg728/claude-personal-helper2:latest
+          image: ghcr.io/OWNER/claude-personal-helper2:latest
           ports:
             - containerPort: 8443
           env:
@@ -27,11 +27,9 @@ spec:
               value: "webhook"
             - name: BOT_WEBHOOK_DOMAIN
               value: "tg-assistant.f-f.dev"
-            - name: BOT_DATABASE_URL
-              value: "sqlite+aiosqlite:///data/bot.db"
-            - name: BOT_DEBUG
-              value: "false"
           envFrom:
+            - configMapRef:
+                name: telegram-bot-config
             - secretRef:
                 name: telegram-bot-secrets
           volumeMounts:
