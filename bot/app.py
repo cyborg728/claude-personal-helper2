@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 import uvicorn
+from telegram import Update
 from telegram.ext import Application
 
 from bot.database import init_db
@@ -52,8 +53,6 @@ async def run_polling() -> None:
 
 
 async def run_webhook() -> None:
-    from telegram import Update
-
     await init_db()
     app = build_application()
     set_application(app)
